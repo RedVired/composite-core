@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import * as swemu from "./index.js";
+import * as swemu from "./swemu.js";
 import { Command } from "commander";
 import fs from "node:fs";
 import yaml from "js-yaml";

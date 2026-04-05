@@ -3,9 +3,9 @@
   "version": "0.0.5",
   "type": "module",
   "description": "swemu — это настраиваемая среда выполнения для микроконтроллеров Stormworks SWLua и симуляции связи между ними.",
-  "main": "src/index.js",
+  "main": "src/cli.js",
   "bin": {
-    "composite": "src/cli.js"
+    "cclua": "src/cli.js"
   },
   "files": [
     "src"
@@ -14,8 +14,8 @@
     "test": "tests"
   },
   "exports": {
-    "./swemu": "./swemu.js",
-    "./bundler": "./bundler.js"
+    "./swemu": "src/swemu.js",
+    "./bundler": "src/bundler.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,3 +1,5 @@
+import "example"
+
 counter = 0
 
 print("hello world")

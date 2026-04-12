@@ -1,8 +1,8 @@
 services:
   a:
-    filePath: ./a.lua
+    filePath: ./dist/a.lua
   b:
-    filePath: ./b.lua
+    filePath: ./dist/b.lua
 links:
   - from: a
     to: b

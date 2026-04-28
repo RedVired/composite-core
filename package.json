@@ -1,6 +1,6 @@
 {
   "name": "composite-core",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "description": "swemu — это настраиваемая среда выполнения для микроконтроллеров Stormworks SWLua и симуляции связи между ними.",
   "main": "src/cli.js",
@@ -34,6 +34,7 @@
   "dependencies": {
     "commander": "^14.0.3",
     "fengari": "^0.1.5",
-    "js-yaml": "^4.1.1"
+    "js-yaml": "^4.1.1",
+    "luaparse": "^0.3.1"
   }
 }

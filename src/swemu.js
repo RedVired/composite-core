@@ -213,68 +213,6 @@ export class SWMicrocontroller {
   }
 }
 
-/**
- * Two-node tick simulator with a shared bus.
- * You decide order: A tick then B tick (or vice versa).
- */
-export class SWTwinSimulator {
-  constructor({ a, b, bus = new CompositeBus(), tickHz = 60 } = {}) {
-    this.a = a;
-    this.b = b;
-    this.bus = bus;
-    this.tick = 0;
-    this.tickHz = tickHz;
-  }
-
-  stepOnce({ order = "AthenB" } = {}) {
-    this.tick++;
-
-    // Both read current bus into inputs at the start of tick
-    this.a.readFromBus(this.bus);
-    this.b.readFromBus(this.bus);
-
-    if (order === "AthenB") {
-      this.a.tick();
-      // After A tick, it writes outputs to bus
-      this.a.writeToBus(this.bus);
-
-      // B sees updated bus on same step? В SW это зависит от модели.
-      // Если хочешь "один тик на data, следующий тик на ack", НЕ обновляй inputs B здесь.
-      // Сейчас модель "последовательно в рамках шага".
-      this.b.readFromBus(this.bus);
-      this.b.tick();
-      this.b.writeToBus(this.bus);
-    } else {
-      this.b.tick();
-      this.b.writeToBus(this.bus);
-
-      this.a.readFromBus(this.bus);
-      this.a.tick();
-      this.a.writeToBus(this.bus);
-    }
-  }
-
-  run(steps = 60, opts = {}) {
-    for (let i = 0; i < steps; i++) this.stepOnce(opts);
-  }
-}
-
-{
-  //fake code
-  let config = {
-    services: {
-      a: { filePath: "" },
-      b: { filePath: "" },
-    },
-    links: [
-      { from: "a", to: "b" },
-      { from: "b", to: "a" },
-    ],
-    log: { console: true, bus: false },
-    simulation: {tickHz: 60}
-  };
-}
-
 //the entry point for simulator
 export class SWSimulator {
   constructor(config) {

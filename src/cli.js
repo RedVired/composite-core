@@ -97,13 +97,28 @@ program
       .readdirSync("./src")
       .filter((file) => file.search(/.+.lua/) != -1);
     for (let fileName of srccode) {
-      fs.writeFileSync(
+      let luacode = fs.readFileSync("./src/" + fileName, "utf-8");
+      let requireList = bundler.getRequireList(luacode);
+      let importCode = {};
+      for (let packName of requireList) {
+        try {
+          importCode[packName] = bundler.getExport(
+            fs.readFileSync("./composite_modules/" + packName + "/index.lua", "utf-8"),
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      luacode = bundler.requireReplace(luacode, importCode)
+      fs.writeFileSync("./dist/" + fileName, luacode)
+
+      /*fs.writeFileSync(
         "./dist/" + fileName,
         bundler.bundle(
           fs.readFileSync("./src/" + fileName, "utf-8"),
           "./composite_modules/",
         ),
-      );
+      );*/
     }
   });
 

@@ -217,7 +217,7 @@ export class SWMicrocontroller {
 export class SWSimulator {
   constructor(config) {
     this.servicesConfig = config.services ?? {};
-    this.links = config.links ?? {};
+    this.links = config.links ?? [];
     this.tick = 0;
 
     this.tickHz = config.simulation?.tickHz ?? 60;

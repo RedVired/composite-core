@@ -5,6 +5,7 @@ import * as bundler from "./bundler.js";
 import { Command } from "commander";
 import fs from "node:fs";
 import yaml from "js-yaml";
+import luamin from "luamin";
 
 const program = new Command();
 
@@ -48,11 +49,11 @@ const configExample = {
       throw new Error("Failed to parse config file: " + error.message);
     }
   } else {
-    console.log("No config file found. Please run 'cclua init' to create one.");
+    console.log("No config file found. Please run 'cslua init' to create one.");
   }
 }
 
-program.name("cclua").description("composite-core cli").version("0.1.0");
+program.name("cslua").description("composite-core cli").version("0.1.0");
 
 program
   .command("init")
@@ -85,7 +86,8 @@ program
 program
   .command("build")
   .description("build swlua file whith composite modules")
-  .action(() => {
+  .option("-m, --minify", "minify dest code")
+  .action((options) => {
     if (!fs.existsSync("./src")) {
       fs.mkdirSync("./src");
     }
@@ -95,30 +97,29 @@ program
 
     let srccode = fs
       .readdirSync("./src")
-      .filter((file) => file.search(/.+.lua/) != -1);
+      .filter((file) => file.search(/.+\.lua/) != -1);
     for (let fileName of srccode) {
-      let luacode = fs.readFileSync("./src/" + fileName, "utf-8");
-      let requireList = bundler.getRequireList(luacode);
-      let importCode = {};
-      for (let packName of requireList) {
-        try {
-          importCode[packName] = bundler.getExport(
-            fs.readFileSync("./composite_modules/" + packName + "/index.lua", "utf-8"),
-          );
-        } catch (error) {
-          console.error(error);
-        }
+      //get luacode
+      let luacode;
+      try {
+        luacode = fs.readFileSync(`./src/${fileName}`, "utf-8");
+      } catch (error) {
+        console.log(error);
       }
-      luacode = bundler.requireReplace(luacode, importCode)
-      fs.writeFileSync("./dist/" + fileName, luacode)
+      //bundling
+      try {
+        luacode = bundler.bundle(luacode, (pack) => {
+          return fs.readFileSync(`./composite_modules/${pack}.lua`, "utf-8");
+        });
+      } catch (error) {
+        console.log(`пиздец: ${error}`);
+      }
 
-      /*fs.writeFileSync(
-        "./dist/" + fileName,
-        bundler.bundle(
-          fs.readFileSync("./src/" + fileName, "utf-8"),
-          "./composite_modules/",
-        ),
-      );*/
+      if (options.minify) {
+        luacode = luamin.minify(luacode);
+      }
+
+      fs.writeFileSync(`./dist/${fileName}`, luacode);
     }
   });
 

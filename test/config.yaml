@@ -1,15 +1,8 @@
 services:
   a:
-    filePath: ./dist/a.lua
-  b:
-    filePath: ./dist/b.lua
-links:
-  - from: a
-    to: b
-  - from: b
-    to: a
+    filePath: ./src/a.lua
 log:
   console: true
-  bus: true
+  bus: false
 simulation:
-  tickHz: 40
+  tickHz: 10

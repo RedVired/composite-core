@@ -104,7 +104,7 @@ program
       try {
         luacode = fs.readFileSync(`./src/${fileName}`, "utf-8");
       } catch (error) {
-        console.log(error);
+        console.log(`src file read error: ${error}`);
       }
       //bundling
       try {
@@ -112,7 +112,7 @@ program
           return fs.readFileSync(`./composite_modules/${pack}.lua`, "utf-8");
         });
       } catch (error) {
-        console.log(`пиздец: ${error}`);
+        console.log(`build error: ${error}`);
       }
 
       if (options.minify) {
